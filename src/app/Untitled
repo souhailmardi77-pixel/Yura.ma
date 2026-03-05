@@ -1,0 +1,195 @@
+import { supabase } from '../lib/supabase';
+
+async function getTopProducts() {
+  // L-Fix: drna .select('*') bach i-jib kolchi (prix, smia, tsawer...)
+  const { data, error } = await supabase
+    .from('products')
+    .select('*') 
+    .limit(3);
+
+  if (error) {
+    console.error('Failed to load products from Supabase', error);
+    return { data: [], error: 'Unable to load products right now.' };
+  }
+
+  return { data: data ?? [], error: null };
+}
+
+async function TopProducts() {
+  const { data, error } = await getTopProducts();
+
+  return (
+    <section aria-labelledby="top-products-heading" className="products-shell">
+      <header className="section-heading">
+        <div>
+          <p id="top-products-heading" className="section-title">
+            Curated Vault Entries
+          </p>
+          <p className="section-subtitle">
+            A glimpse into the YURA archive — watches, eyewear, and durags handpicked for
+            the vault.
+          </p>
+        </div>
+      </header>
+
+      {error ? (
+        <p className="products-error" role="status">
+          {error}
+        </p>
+      ) : data.length === 0 ? (
+        <p className="products-empty" role="status">
+          No products are available yet. Secure entries will appear here once your vault
+          is populated.
+        </p>
+      ) : (
+        <div className="products-grid" aria-label="Top products">
+          {data.map((product) => (
+            <article key={product.id} className="product-card">
+              <header className="product-header">
+                <span className="product-tag">
+                  {product.category ?? 'ACCESSORY'}
+                </span>
+                <span className="product-tier">
+                  VAULT GRADE
+                </span>
+              </header>
+
+              {/* Ila kant t-tswira, n-biyenouha hna */}
+              {product.image_url && (
+                <div className="w-full h-48 mt-4 mb-2 overflow-hidden rounded-md border border-gray-800">
+                  <img src={product.image_url} alt={product.name} className="w-full h-full object-cover opacity-80" />
+                </div>
+              )}
+
+              <h3 className="product-name mt-2">{product.name}</h3>
+
+              <div className="product-meta-row">
+                <span className="product-price">
+                  {typeof product.price === 'number'
+                    ? `MAD ${product.price.toFixed(0)}`
+                    : 'By private request'}
+                </span>
+                <span className="product-pill">Digitally certified</span>
+              </div>
+
+              {product.description && (
+                <p className="product-description">{product.description}</p>
+              )}
+
+              <footer className="product-footer">
+                <span>Secured in vault</span>
+                <span className="product-indicator" aria-hidden="true" />
+              </footer>
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+export default async function Home() {
+  return (
+    <main>
+      <div className="page-shell">
+        <header className="page-header">
+          <div className="brand-mark" aria-label="YURA">
+            <div className="brand-glyph" aria-hidden="true">
+              <div className="brand-glyph-inner" />
+            </div>
+            <span className="brand-name">YURA // atelier</span>
+          </div>
+
+          <span className="header-pill">
+            <span className="header-dot" />
+            Encrypted digital vault access
+          </span>
+        </header>
+
+        <section className="hero" aria-labelledby="hero-heading">
+          <div className="hero-copy">
+            <div className="hero-kicker">
+              <span className="hero-kicker-badge">New</span>
+              Private digital vault for tangible luxury
+            </div>
+
+            <h1 id="hero-heading" className="hero-title">
+              Midnight-grade custody for{' '}
+              <span>glasses, durags, and timepieces.</span>
+            </h1>
+
+            <p className="hero-subtitle">
+              YURA is a secure layer between you and your collection. Archive high-end
+              eyewear, durags, and watches in a digital vault built for discretion,
+              provenance, and future resale.
+            </p>
+
+            <div className="hero-pills" aria-label="YURA categories">
+              <span className="hero-pill">Artisan glasses</span>
+              <span className="hero-pill">Silk & velvet durags</span>
+              <span className="hero-pill">Statement watches</span>
+            </div>
+
+            <div className="hero-actions">
+              <button type="button" className="hero-btn-primary">
+                Enter vault request
+              </button>
+              <button type="button" className="hero-btn-secondary">
+                View curated drops
+              </button>
+            </div>
+
+            <div className="hero-meta" aria-label="Vault highlights">
+              <div className="hero-meta-item">
+                <span className="hero-meta-label">Security</span>
+                <span className="hero-meta-value">End-to-end mindset, zero noise</span>
+              </div>
+              <div className="hero-meta-item">
+                <span className="hero-meta-label">Curation</span>
+                <span className="hero-meta-value">Limited entries, maximum intent</span>
+              </div>
+            </div>
+          </div>
+
+          <aside className="hero-visual" aria-label="Digital vault interface preview">
+            <div className="hero-visual-inner">
+              <header className="vault-label">
+                <span>YURA DIGITAL VAULT</span>
+                <span className="vault-status">
+                  <span className="vault-status-dot" aria-hidden="true" />
+                  Secure channel
+                </span>
+              </header>
+
+              <div className="vault-grid">
+                <div className="vault-cell">
+                  <span className="vault-cell-label">Eyewear</span>
+                  <span className="vault-cell-value">Glasses</span>
+                  <span className="section-subtitle">Polarized luxury frames</span>
+                </div>
+                <div className="vault-cell">
+                  <span className="vault-cell-label">Headwear</span>
+                  <span className="vault-cell-value">Durags</span>
+                  <span className="section-subtitle">Silk, velvet, monogram</span>
+                </div>
+                <div className="vault-cell">
+                  <span className="vault-cell-label">Time</span>
+                  <span className="vault-cell-value">Watches</span>
+                  <span className="section-subtitle">Complications & classics</span>
+                </div>
+              </div>
+
+              <footer className="vault-foot">
+                <span>Midnight black protocol</span>
+                <span className="vault-foot-chip">Read-only session · No noise</span>
+              </footer>
+            </div>
+          </aside>
+        </section>
+
+        {/* Server component: secure fetch of top products */}
+        <TopProducts />
+      </div>
+    </main>
+  );
+}

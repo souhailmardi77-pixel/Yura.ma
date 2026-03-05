@@ -1,190 +1,48 @@
 "use client";
+import React from 'react';
 
-import { useState } from "react";
-import { supabase } from "@/lib/supabase";
-
-export default function AdminDashboard() {
-  const [formData, setFormData] = useState({
-    name: "",
-    category: "Glasses",
-    price: "",
-    description: "",
-    image_url: "",
-  });
-  const [status, setStatus] = useState({ type: "", message: "" });
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleChange = (
-    e:
-      | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLSelectElement>
-      | React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setStatus({ type: "info", message: "Securing entry..." });
-
-    const priceNum = parseFloat(formData.price);
-    if (isNaN(priceNum) || priceNum < 0) {
-      setStatus({ type: "error", message: "Price must be a valid number." });
-      setIsLoading(false);
-      return;
-    }
-
-    const { error } = await supabase.from("products").insert([
-      {
-        name: formData.name,
-        category: formData.category,
-        price: priceNum,
-        description: formData.description,
-        image_url: formData.image_url,
-      },
-    ]);
-
-    if (error) {
-      setStatus({
-        type: "error",
-        message: "Failed to add product: " + error.message,
-      });
-    } else {
-      setStatus({
-        type: "success",
-        message: "Product added to vault successfully!",
-      });
-      setFormData({
-        name: "",
-        category: "Glasses",
-        price: "",
-        description: "",
-        image_url: "",
-      });
-    }
-    setIsLoading(false);
-  };
-
+export default function LuxuryLanding() {
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-white p-8 font-sans">
-      <div className="max-w-2xl mx-auto mt-10">
-        <h1 className="text-3xl font-bold tracking-widest mb-2 border-b border-gray-800 pb-4">
-          YURA // COMMAND CENTER
-        </h1>
-        <p className="text-gray-400 mb-8 uppercase tracking-widest text-sm">
-          Vault Data Entry Protocol
-        </p>
+    <main className="min-h-screen bg-[#050505] text-white font-sans selection:bg-[#d4af37] selection:text-black">
+      {/* Navigation */}
+      <nav className="p-8 flex justify-between items-center border-b border-white/5 backdrop-blur-sm fixed w-full z-50 bg-black/20">
+        <div className="text-2xl font-black tracking-[0.4em] text-[#d4af37]">YURA</div>
+        <div className="hidden md:flex gap-12 text-[10px] uppercase tracking-[0.3em] opacity-60">
+          <span className="hover:opacity-100 cursor-pointer transition-opacity">The Vault</span>
+          <span className="hover:opacity-100 cursor-pointer transition-opacity">Curation</span>
+          <span className="hover:opacity-100 cursor-pointer transition-opacity">Access</span>
+        </div>
+      </nav>
 
-        {status.message && (
-          <div
-            className={`p-4 mb-6 rounded border ${
-              status.type === "error"
-                ? "bg-red-900/20 border-red-500 text-red-200"
-                : status.type === "success"
-                ? "bg-green-900/20 border-green-500 text-green-200"
-                : "bg-blue-900/20 border-blue-500 text-blue-200"
-            }`}
-          >
-            {status.message}
+      {/* Hero Section */}
+      <section className="relative h-screen flex flex-col justify-center items-center px-6 overflow-hidden">
+        {/* Background Ambient Glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-[#d4af37]/5 blur-[120px] rounded-full"></div>
+        
+        <div className="relative z-10 text-center space-y-8 max-w-4xl">
+          <h2 className="text-[10px] uppercase tracking-[0.6em] text-[#d4af37] mb-4">Midnight Grade Asset Custody</h2>
+          <h1 className="text-5xl md:text-8xl font-black tracking-tighter leading-[0.9] uppercase italic italic">
+            DEFINING <br/> <span className="text-transparent border-t border-b border-white/20 px-4">THE VAULT</span>
+          </h1>
+          <p className="text-gray-400 text-sm md:text-base max-w-xl mx-auto font-light leading-relaxed tracking-wide">
+            YURA is a secure layer between you and your collection. Archiving high-end eyewear, durags, and timepieces in a digital vault built for discretion.
+          </p>
+          
+          <div className="flex flex-col md:flex-row gap-6 justify-center pt-8">
+            <button className="px-12 py-5 bg-[#d4af37] text-black text-xs font-black uppercase tracking-[0.3em] hover:bg-white transition-all duration-500">
+              Enter Vault Request
+            </button>
+            <button className="px-12 py-5 border border-white/10 text-xs font-black uppercase tracking-[0.3em] hover:bg-white/5 transition-all">
+              View Curated Drops
+            </button>
           </div>
-        )}
+        </div>
+      </section>
 
-        <form
-          onSubmit={handleSubmit}
-          className="bg-[#111] border border-gray-800 p-8 rounded-lg space-y-6 shadow-2xl"
-        >
-          <div>
-            <label className="block text-gray-400 text-sm tracking-widest uppercase mb-2">
-              Product Name
-            </label>
-            <input
-              required
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full bg-black border border-gray-700 rounded p-3 text-white focus:outline-none focus:border-white transition"
-              placeholder="e.g. YURA Onyx Shades"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-6">
-            <div>
-              <label className="block text-gray-400 text-sm tracking-widest uppercase mb-2">
-                Category
-              </label>
-              <select
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                className="w-full bg-black border border-gray-700 rounded p-3 text-white focus:outline-none focus:border-white transition"
-              >
-                <option value="Glasses">Glasses</option>
-                <option value="Durags">Durags</option>
-                <option value="Watches">Watches</option>
-                <option value="Rings">Rings</option>
-                <option value="Necklaces">Necklaces</option>
-                <option value="Leather">Leather</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-gray-400 text-sm tracking-widest uppercase mb-2">
-                Price (MAD)
-              </label>
-              <input
-                required
-                type="number"
-                name="price"
-                value={formData.price}
-                onChange={handleChange}
-                className="w-full bg-black border border-gray-700 rounded p-3 text-white focus:outline-none focus:border-white transition"
-                placeholder="0.00"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-gray-400 text-sm tracking-widest uppercase mb-2">
-              Image URL
-            </label>
-            <input
-              required
-              type="text"
-              name="image_url"
-              value={formData.image_url}
-              onChange={handleChange}
-              className="w-full bg-black border border-gray-700 rounded p-3 text-white focus:outline-none focus:border-white transition"
-              placeholder="https://..."
-            />
-          </div>
-
-          <div>
-            <label className="block text-gray-400 text-sm tracking-widest uppercase mb-2">
-              Description
-            </label>
-            <textarea
-              required
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              rows={4}
-              className="w-full bg-black border border-gray-700 rounded p-3 text-white focus:outline-none focus:border-white transition"
-              placeholder="Product details..."
-            ></textarea>
-          </div>
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full py-4 mt-4 bg-white text-black font-bold tracking-widest uppercase hover:bg-gray-300 transition disabled:opacity-50"
-          >
-            {isLoading ? "Securing..." : "Add to Vault"}
-          </button>
-        </form>
+      {/* Footer Info */}
+      <div className="fixed bottom-8 left-8 text-[8px] uppercase tracking-[0.5em] opacity-30">
+        Protocol: Midnight Black 1.0 // Rabat, MA
       </div>
     </main>
   );
 }
-
-

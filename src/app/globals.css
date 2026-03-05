@@ -1,6 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  background-color: #050505;
+  color: white;
+}
 :root {
   --bg-main: #0a0a0a;
   --bg-elevated: #111111;

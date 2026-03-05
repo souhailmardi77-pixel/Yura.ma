@@ -7,7 +7,15 @@ const config: Config = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        gold: "#d4af37",
+        midnight: "#050505",
+      },
+      letterSpacing: {
+        'ultra': '0.5em',
+      }
+    },
   },
   plugins: [],
 };
